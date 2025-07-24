@@ -8,21 +8,44 @@
 </head>
 <body>
     <div class="memo-container">
-        <div class="header">--- Daily Memos (Resets in 24h) ---</div>
+        <h1 id="animated-heading" class="header"></h1>
+        <p class="sub-header">--- Daily Memos (Resets in 24h) ---</p>
         <div id="notes-display" class="notes-display"></div>
         <textarea id="memo-input" placeholder="Type your memo here..."></textarea>
         <button onclick="saveNote()">Save Note</button>
     </div>
 
     <script>
-        // Fetch and display notes when the page loads
-        window.onload = async () => {
-            const response = await fetch('/notes');
-            const notes = await response.text();
-            document.getElementById('notes-display').innerText = notes;
+        // --- Typing Animation Script ---
+        const headingElement = document.getElementById('animated-heading');
+        const textToType = "Welcome Boo, What's on your mind?";
+        let charIndex = 0;
+
+        function typeEffect() {
+            if (charIndex < textToType.length) {
+                headingElement.textContent += textToType.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeEffect, 100); // Typing speed in ms
+            } else {
+                // Remove cursor blinking after typing is done
+                headingElement.style.borderRight = 'none';
+                headingElement.style.animation = 'none';
+            }
+        }
+        
+        // --- Main Page Load Logic ---
+        window.onload = () => {
+            typeEffect(); // Start the typing effect
+
+            // Fetch existing notes
+            (async () => {
+                const response = await fetch('/notes');
+                const notes = await response.text();
+                document.getElementById('notes-display').innerText = notes;
+            })();
         };
 
-        // Save a new note
+        // --- Save a new note ---
         async function saveNote() {
             const input = document.getElementById('memo-input');
             const noteText = input.value;
@@ -34,8 +57,12 @@
                 body: JSON.stringify({ note: noteText })
             });
 
-            input.value = ''; // Clear the input box
-            window.onload(); // Refresh the notes display
+            input.value = ''; // Clear input
+            
+            // Refresh notes display after saving
+            const response = await fetch('/notes');
+            const notes = await response.text();
+            document.getElementById('notes-display').innerText = notes;
         }
     </script>
 </body>
