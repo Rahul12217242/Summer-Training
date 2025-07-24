@@ -4,7 +4,92 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terminal Memo</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            /* --- CHANGE HERE: Simplified to a solid black background --- */
+            background-color: #000;
+            font-family: 'Courier New', Courier, monospace;
+            color: #00FF00;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .memo-container {
+            background-color: rgba(0, 0, 0, 0.75);
+            border: 2px solid #00FF00;
+            padding: 20px;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 0 15px #00FF00;
+        }
+
+        /* Main animated heading */
+        .header {
+            font-size: 1.4em;
+            min-height: 1.4em;
+            text-align: center;
+            margin-bottom: 5px;
+            border-right: 3px solid rgba(0, 255, 0, .75);
+            animation: blink 1s step-end infinite;
+        }
+
+        /* Static sub-heading */
+        .sub-header {
+            font-size: 0.9em;
+            text-align: center;
+            opacity: 0.7;
+            margin: 0 0 15px 0;
+        }
+
+        @keyframes blink {
+            from, to { border-color: transparent }
+            50% { border-color: rgba(0, 255, 0, .75); }
+        }
+
+        .notes-display {
+            width: 100%;
+            height: 200px;
+            background-color: #0d0d0d;
+            border: 1px solid #00FF00;
+            margin-bottom: 15px;
+            padding: 10px;
+            box-sizing: border-box;
+            white-space: pre-wrap;
+            overflow-y: auto;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            background-color: #0d0d0d;
+            border: 1px solid #00FF00;
+            color: #00FF00;
+            font-family: inherit;
+            font-size: 1em;
+            padding: 10px;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #00FF00;
+            color: #000;
+            border: none;
+            font-family: inherit;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #008000;
+        }
+    </style>
 </head>
 <body>
     <div class="memo-container">
@@ -25,9 +110,8 @@
             if (charIndex < textToType.length) {
                 headingElement.textContent += textToType.charAt(charIndex);
                 charIndex++;
-                setTimeout(typeEffect, 100); // Typing speed in ms
+                setTimeout(typeEffect, 100);
             } else {
-                // Remove cursor blinking after typing is done
                 headingElement.style.borderRight = 'none';
                 headingElement.style.animation = 'none';
             }
@@ -35,9 +119,8 @@
         
         // --- Main Page Load Logic ---
         window.onload = () => {
-            typeEffect(); // Start the typing effect
+            typeEffect(); 
 
-            // Fetch existing notes
             (async () => {
                 const response = await fetch('/notes');
                 const notes = await response.text();
@@ -57,9 +140,8 @@
                 body: JSON.stringify({ note: noteText })
             });
 
-            input.value = ''; // Clear input
+            input.value = ''; 
             
-            // Refresh notes display after saving
             const response = await fetch('/notes');
             const notes = await response.text();
             document.getElementById('notes-display').innerText = notes;
