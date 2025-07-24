@@ -2,15 +2,21 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const app = express();
-const PORT = 3000; // The internal port our app runs on
+const PORT = 3000;
 
 const NOTES_FILE = path.join(__dirname, 'notes.txt');
 
-app.use(express.json()); // Middleware to parse JSON bodies
-app.use(express.static(__dirname)); // Serve static files like index.html and style.css
+// Middleware to parse JSON bodies and serve static files
+app.use(express.json());
+app.use(express.static(__dirname));
 
 // Endpoint to get all notes
 app.get('/notes', (req, res) => {
+    // Add headers to prevent any browser caching of this response
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+
     if (fs.existsSync(NOTES_FILE)) {
         res.sendFile(NOTES_FILE);
     } else {
